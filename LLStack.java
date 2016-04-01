@@ -1,3 +1,8 @@
+//Team Latkless Monster - 
+//
+//
+//
+
 /*****************************************************
  * class LLStack
  * Implements ADT stack as specified in local Stack.java
