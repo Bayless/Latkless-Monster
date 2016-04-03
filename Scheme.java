@@ -7,7 +7,7 @@
       2. ...
       5. Profit!
  *
- * STACK OF CHOICE: ____ by Clyde ____
+ * STACK OF CHOICE: ALStack by Clyde ____
  * b/c ...
  ******************************************************/
 
