@@ -1,7 +1,9 @@
-//Team Latkless Monster - 
-//
-//
-//
+/****
+Team Latkless-Monster
+Conan Wong and Bayle Smith-Salzberg
+HW23 -- Leon Leonwood Stack
+2016-04-03
+ ****/
 
 /*****************************************************
  * class LLStack

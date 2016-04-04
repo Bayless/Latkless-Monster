@@ -3,14 +3,27 @@
  * Simulates a rudimentary Scheme interpreter
  *
  * ALGORITHM for EVALUATING A SCHEME EXPRESSION:
-      1. Steal underpants.
-      2. ...
-      5. Profit!
+      1. Process string by flipping it and removing outer parens.
+      2. Remove blankspace and push onto a stack 
+         (operations, nums and expressions on separate layers)
+      3. Recursively solve the stack by popping and interpreting
+         the operation first, and applying it to the rest of the
+         stack.
+      4. If it encounters an expression within the main expression,
+         separately solve that expression and re-push it onto the
+         stack.
+      5. Then repeat steps 3 and 4, until base case is reached. 
+      6. Profit!
  *
  * STACK OF CHOICE: LLStack by BSS
- * b/c ...
+ * b/c It is readily available and hot out of the oven (freshly coded)!
  ******************************************************/
-
+/****
+Team Latkless-Monster
+Conan Wong and Bayle Smith-Salzberg
+HW24 -- Schemin
+2016-04-03
+ ****/
 public class Scheme {
 
     /****************************************************** 
@@ -27,9 +40,9 @@ public class Scheme {
 	expr = expr.substring(1,expr.length()-1); //removes first and last parenthesis
 	expr = flip(expr); //flips values for processing
 	LLStack<String> storage = new LLStack<String>();
-	for (int i = 0; i < expr.length() - 1; i++){
+	for (int i = 0; i < expr.length() - 1; i++){ //String to stack processing
 	    if (!(expr.substring(i,i+1).equals(" "))){
-    	    if ((expr.substring(i,i+1).equals(")"))) { //if it finds a mini expression in the bigger expression, it puts the entire mini expression on one layer of the stack.
+    	    if ((expr.substring(i,i+1).equals(")"))) { //places entire mini expression onto one layer of stack.
 	    	    String tmp = "";
 	    	    while (!(expr.substring(i,i+1).equals("("))){
 	        		tmp += (expr.substring(i,i+1));
@@ -39,8 +52,8 @@ public class Scheme {
 		        storage.push(tmp);
     	    }
     	    else {
-    	        String tmp = "";
-    	        while (!(expr.substring(i,i+1).equals(" "))){
+    	        String tmp = ""; 
+    	        while (!(expr.substring(i,i+1).equals(" "))){ //places each number onto its own layer.
     	            tmp = expr.substring(i,i+1) + tmp;
     	            i++;
     	        }
@@ -49,6 +62,7 @@ public class Scheme {
 	    }
 	}
 
+	//operation processing on the stack.
 	if (storage.peek().equals("+")){
 	    storage.pop();
 	    return "" + unload(1,storage);
@@ -72,13 +86,13 @@ public class Scheme {
      *           Ops: + is 1, - is 2, * is 3
      ******************************************************/
     public static int unload( int op, LLStack<String> numbers ) {
-	if (!isNumber(numbers.peek())) {
+	if (!isNumber(numbers.peek())) { //handles and solves mini-expressions
 	    numbers.push(evaluate(flip(numbers.pop())));
 		return unload(op,numbers); 
 	    }
 	    
 	int first= Integer.parseInt(numbers.pop());
-	if (numbers.isEmpty()){
+	if (numbers.isEmpty()){ //base case
 	    return first;
 	}
 	
@@ -86,7 +100,7 @@ public class Scheme {
 	    return first + unload(1,numbers);
 	}
 	else if (op == 2){
-	    return first - unload(1,numbers);
+	    return first - unload(1,numbers); //( - 1 2 3 ) means ( - 1 ( + 2 3 ) ), not ( - 1 ( - 2 3 ) )
 	}
 	else if (op == 3){
 	    return first * unload(3,numbers);
@@ -142,8 +156,7 @@ public class Scheme {
 	System.out.println(zoo4);
 	System.out.println("zoo4 eval'd: " + evaluate(zoo4) );
 	//...-4
-		  /*v~~~~~~~~~~~~~~MAKE MORE~~~~~~~~~~~~~~v
-          ^~~~~~~~~~~~~~~~AWESOME~~~~~~~~~~~~~~~^*/
+
     }//main
 
 }//end class Scheme
