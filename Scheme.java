@@ -7,7 +7,7 @@
       2. ...
       5. Profit!
  *
- * STACK OF CHOICE: ALStack by BSS
+ * STACK OF CHOICE: LLStack by BSS
  * b/c ...
  ******************************************************/
 
@@ -24,33 +24,38 @@ public class Scheme {
      ******************************************************/
     //max 2 numbers per expression
     public static String evaluate( String expr ){
-	expr = expr(1,expr.length-1);
-	expr = expr.flip();
-	ALStack<String> storage = new ALStack<String>();
-	for (int i = 0; i<expr.length - 1; i++){
+	expr = expr.substring(1,expr.length()-1); //removes first and last parenthesis
+	expr = flip(expr); //flips values for processing
+	LLStack<String> storage = new LLStack<String>();
+	for (int i = 0; i < expr.length() - 1; i++){
 	    if (!(expr.substring(i,i+1).equals(" "))){
-		storage.push(expr.substring(i,i+1));
+    	    if ((expr.substring(i,i+1).equals(")"))) { //if it finds a mini expression in the bigger expression, it puts the entire mini expression on one layer of the stack.
+	    	    String tmp = "";
+	    	    while (!(expr.substring(i,i+1).equals("("))){
+	        		tmp += (expr.substring(i,i+1));
+	          		i++;
+		            }
+		        tmp += "(";
+		        storage.push(tmp);
+    	    }
+    	    else {storage.push(expr.substring(i,i+1));
+    	    }
 	    }
 	}
-	ALStack sub = storage;
-	int ctr = 0;
-	String result = "";
-	while (!sub.isEmpty){
-	    if (sub.peek().equals("+")){
-		sub.pop();
-		unload(1,sub);
-	    }
-	    else if (sub.peek().equals("-")){
-		sub.pop();
-		unload(2,sub);
-	    }
-	    else if (sub.peek().equals("*")){
-		sub.pop();
-		unload(3,sub);
-	    }
-	    sub.pop();
+
+	if (storage.peek().equals("+")){
+	    storage.pop();
+	    return "" + unload(1,storage);
 	}
-       
+	else if (storage.peek().equals("-")){
+	    storage.pop();
+	    return "" + unload(2,storage);
+	}
+	else if (storage.peek().equals("*")){
+	    storage.pop();
+	    return "" + unload(3,storage);
+	}
+	return "";   
     }//end evaluate()
 
 
@@ -60,25 +65,27 @@ public class Scheme {
      *           Returns the result of operating on sequence of operands.
      *           Ops: + is 1, - is 2, * is 3
      ******************************************************/
-    public static String unload( int op, Stack<String> numbers ) {
-	int first= Integer.parseInt(numbers.pop());
-	String newNum = //make back into string????
-	if (!isNumber(numbers.peek()) {
-		evaluate(newNum);
+    public static int unload( int op, LLStack<String> numbers ) {
+	if (!isNumber(numbers.peek())) {
+	    numbers.push(evaluate(flip(numbers.pop()))); //evaluates mini expression and puts the solution to it back onto the stack
+	    return unload(op,numbers);  //continues evaluating after mini expression solved
 	    }
-	if (op == 1){
-	    numbers.pop();
-	    return "" + (first + unload(1,numbers));
-	}
-	else if (op == 2){
-	    numbers.pop();
-	    return "" + (first - unload(2,numbers));
-	}
-	else if (op == 3){
-	    numbers.pop();
-	    return "" + (first * unload(1,numbers));
+	    
+	int first= Integer.parseInt(numbers.pop());
+	if (numbers.isEmpty()){
+	    return first; //if first is the last digit, just return it
 	}
 	
+	else if (op == 1){ //recursively solve it depending on op input.
+	    return first + unload(1,numbers);
+	}
+	else if (op == 2){
+	    return first - unload(2,numbers);
+	}
+	else if (op == 3){
+	    return first * unload(1,numbers);
+	}
+	return 0;
     }//end unload()
 
 
@@ -92,10 +99,11 @@ public class Scheme {
 	    return false;
 	}
     }
+    
     public static String flip( String s ) 
     {
 	String retStr = "";
-	ALStack<String> caleb = new ALStack<String>(s.length());
+	LLStack<String> caleb = new LLStack<String>();
 	for (int i = 0; i < s.length(); i++){
 	    caleb.push(s.substring(i,i+1));
 	}
@@ -109,19 +117,21 @@ public class Scheme {
     //main method for testing
     public static void main( String[] args ) {
 
-	/*v~~~~~~~~~~~~~~MAKE MORE~~~~~~~~~~~~~~v
 	String zoo1 = "( + 4 3 )";
 	System.out.println(zoo1);
 	System.out.println("zoo1 eval'd: " + evaluate(zoo1) );
 	//...7
+	
 	String zoo2 = "( + 4 ( * 2 5 ) 3 )";
 	System.out.println(zoo2);
 	System.out.println("zoo2 eval'd: " + evaluate(zoo2) );
 	//...17
+
 	String zoo3 = "( + 4 ( * 2 5 ) 6 3 ( - 56 50 ) )";
 	System.out.println(zoo3);
 	System.out.println("zoo3 eval'd: " + evaluate(zoo3) );
 	//...29
+	  /*v~~~~~~~~~~~~~~MAKE MORE~~~~~~~~~~~~~~v
 	String zoo4 = "( - 1 2 3 )";
 	System.out.println(zoo4);
 	System.out.println("zoo4 eval'd: " + evaluate(zoo4) );
@@ -130,3 +140,4 @@ public class Scheme {
     }//main
 
 }//end class Scheme
+
