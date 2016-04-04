@@ -38,7 +38,13 @@ public class Scheme {
 		        tmp += "(";
 		        storage.push(tmp);
     	    }
-    	    else {storage.push(expr.substring(i,i+1));
+    	    else {
+    	        String tmp = "";
+    	        while (!(expr.substring(i,i+1).equals(" "))){
+    	            tmp = expr.substring(i,i+1) + tmp;
+    	            i++;
+    	        }
+    	        storage.push(tmp);
     	    }
 	    }
 	}
@@ -67,23 +73,23 @@ public class Scheme {
      ******************************************************/
     public static int unload( int op, LLStack<String> numbers ) {
 	if (!isNumber(numbers.peek())) {
-	    numbers.push(evaluate(flip(numbers.pop()))); //evaluates mini expression and puts the solution to it back onto the stack
-	    return unload(op,numbers);  //continues evaluating after mini expression solved
+	    numbers.push(evaluate(flip(numbers.pop())));
+		return unload(op,numbers); 
 	    }
 	    
 	int first= Integer.parseInt(numbers.pop());
 	if (numbers.isEmpty()){
-	    return first; //if first is the last digit, just return it
+	    return first;
 	}
 	
-	else if (op == 1){ //recursively solve it depending on op input.
+	else if (op == 1){
 	    return first + unload(1,numbers);
 	}
 	else if (op == 2){
-	    return first - unload(2,numbers);
+	    return first - unload(1,numbers);
 	}
 	else if (op == 3){
-	    return first * unload(1,numbers);
+	    return first * unload(3,numbers);
 	}
 	return 0;
     }//end unload()
@@ -131,13 +137,13 @@ public class Scheme {
 	System.out.println(zoo3);
 	System.out.println("zoo3 eval'd: " + evaluate(zoo3) );
 	//...29
-	  /*v~~~~~~~~~~~~~~MAKE MORE~~~~~~~~~~~~~~v
+
 	String zoo4 = "( - 1 2 3 )";
 	System.out.println(zoo4);
 	System.out.println("zoo4 eval'd: " + evaluate(zoo4) );
 	//...-4
+		  /*v~~~~~~~~~~~~~~MAKE MORE~~~~~~~~~~~~~~v
           ^~~~~~~~~~~~~~~~AWESOME~~~~~~~~~~~~~~~^*/
     }//main
 
 }//end class Scheme
-
